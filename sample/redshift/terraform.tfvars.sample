@@ -1,0 +1,110 @@
+###########################################
+########## Common variables ###############
+###########################################
+
+aws_region  = "us-east-1"
+# profile     = "pragma-dev"
+environment = "dev"
+client      = "pragma"
+project     = "datalake"
+common_tags = {
+  Area          = "analytics"
+  Owner         = "equipo_datos"
+  CostCenter    = "CC-1234"
+  ManagedBy     = "Terraform"
+}
+
+###########################################
+########## Redshift variables ############
+###########################################
+
+# Tipo de despliegue
+deployment_type = "serverless"
+store_credentials = false
+
+# Configuración para Redshift Serverless
+redshift_config = {
+  cluster_identifier = "pragma-dev-redshift-serverless"
+  
+  serverless_config = {
+    base_capacity   = 16
+    namespace_name  = "pragma-dev-ns"
+    workgroup_name  = "pragma-dev-wg"
+  }
+  
+  database = {
+    name              = "datalake_dev"
+    db_username       = "admin_serverless"
+    db_password       = "YourSecurePassword"  # Usar variable sensible en producción
+    default_namespace = "public"
+  }
+
+  network = {
+    subnet_ids           = ["subnet-12345", "subnet-67890", "subnet-abcde"]
+    security_group_ids   = ["sg-12345"]
+    enhanced_vpc_routing = true
+    publicly_accessible  = false
+  }
+
+  monitoring = {
+    enable_logging  = true
+    logging_bucket  = "redshift-logs-pragma-dev"
+    logging_prefix  = "serverless-logs/"
+  }
+
+  security = {
+    encrypted         = true
+    kms_key_id        = "alias/aws/redshift"
+    rotation_enabled  = false
+  }
+
+  tags = {
+    DataClassification = "confidential"
+    DeploymentType     = "serverless"
+  }
+}
+
+# Ejemplo de configuración para Redshift Provisioned (comentado)
+/*
+deployment_type = "provisioned"
+store_credentials = true
+
+redshift_config = {
+  cluster_identifier = "pragma-dev-redshift-provisioned"
+  
+  provisioned_config = {
+    node_type       = "ra3.xlplus"
+    cluster_type    = "multi-node"
+    number_of_nodes = 2
+  }
+  
+  database = {
+    name        = "datalake_dev"
+    db_username = "admin_provisioned"
+    db_password = "YourSecurePassword"  # Usar variable sensible en producción
+  }
+
+  network = {
+    subnet_ids           = ["subnet-12345", "subnet-67890"]
+    security_group_ids   = ["sg-12345"]
+    enhanced_vpc_routing = true
+    publicly_accessible  = false
+  }
+
+  monitoring = {
+    enable_logging  = true
+    logging_bucket  = "redshift-logs-pragma-dev"
+    logging_prefix  = "provisioned-logs/"
+  }
+
+  security = {
+    encrypted         = true
+    rotation_enabled  = true
+  }
+  
+  tags = {
+    DataClassification = "confidential"
+    DeploymentMode     = "provisioned"
+  }
+}
+*/
